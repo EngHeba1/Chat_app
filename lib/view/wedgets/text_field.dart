@@ -6,10 +6,10 @@ class TextFieldWidget extends StatelessWidget {
   String titel;
   //int maxLine;
   String? Function(String?)?  validator;
-  //TextEditingController? controller=TextEditingController();
+  TextEditingController? controller=TextEditingController();
   void Function(String?)? onSaved;
   bool? obscur;
-  TextFieldWidget({super.key, required this.titel,this.onSaved ,this.validator ,this.obscur });
+  TextFieldWidget({super.key, required this.titel,this.onSaved ,this.validator ,this.obscur,this.controller });
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +21,7 @@ class TextFieldWidget extends StatelessWidget {
         obscureText: obscur??false,
         onSaved: onSaved,
         validator:validator,
+        controller: controller,
         decoration: InputDecoration(
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),

@@ -1,6 +1,10 @@
 import 'package:chat_app/view/wedgets/text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../styles/app_colors.dart';
 
 class CreatAccount extends StatefulWidget {
   const CreatAccount({super.key});
@@ -13,6 +17,9 @@ class CreatAccount extends StatefulWidget {
 
 class _CreatAccountState extends State<CreatAccount> {
   var formKey = GlobalKey<FormState>();
+  var emailControler=TextEditingController();
+  var passwordControler=TextEditingController();
+  bool obscureTextCheck = true;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +74,7 @@ class _CreatAccountState extends State<CreatAccount> {
                     }),
                 TextFieldWidget(
                     titel: 'Email',
+                    controller: emailControler,
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
                         return "Please Enter Email address";
@@ -78,14 +86,67 @@ class _CreatAccountState extends State<CreatAccount> {
                         return "Pleae Enter valid Password";
                       }
                     }),
-                TextFieldWidget(
-                    titel: 'Password',
-                    obscur: true,
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return "Please Enter Pasward";
+                //
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: passwordControler,
+                    validator: (password) {
+                      if (password!.isEmpty) {
+                        return
+                          //pro.language == "en"?
+                      "Enter Password";
+                           // : "أدخل كلمة المرور";
                       }
-                    }),
+                      else if (password.length<6 ){
+                        return
+                          //pro.language == "en"?
+                       "At leats 6 character";
+                           // : "يجب ألا يقل عن 6 أحرف";
+                      }
+                      return null;
+                    },
+                    obscureText: obscureTextCheck,
+
+                    decoration: InputDecoration(
+                        label: Text(
+                         // pro.language == "en"?
+                          "Password"
+                             // : "كلمة المرور",
+                          ,style:
+                        //pro.language == "en"?
+                               GoogleFonts.novaSquare(
+                            color: AppCloros.lightColor,
+                          )
+                              //: GoogleFonts.cairo(
+                            //color: AppCloros.lightColor,
+                          ),
+
+                        border: const OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                          BorderSide(color: AppCloros.lightColor),
+                        ),
+                        prefixIcon: const Icon(Icons.lock_outline_rounded),
+                        suffix:
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                obscureTextCheck = !obscureTextCheck;
+                              });
+                            },
+                            child:
+                            obscureTextCheck
+                                ? const Icon(
+                              Icons.visibility,
+                              color: AppCloros.lightColor,
+                            )
+                                : const Icon(
+                              Icons.visibility_off,
+                              color: AppCloros.lightColor,
+                            ))),
+                  ),
+                ),
                 ElevatedButton(
                     onPressed: onPressed, child: Text("Creat Account"))
               ],
@@ -96,9 +157,12 @@ class _CreatAccountState extends State<CreatAccount> {
     ]);
   }
 
-  onPressed() {
+  onPressed() async {    //creat user
     if(formKey.currentState!.validate()){
-    print("hello");
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailControler.text,
+        password: passwordControler.text,
+      );
 
     }
   }
