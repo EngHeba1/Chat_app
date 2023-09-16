@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:chat_app/creat_account/creat_account_view.dart';
+import 'package:chat_app/modules/creat_account/creat_account_view.dart';
 import 'package:flutter/material.dart';
 
 class Splash extends StatefulWidget {
