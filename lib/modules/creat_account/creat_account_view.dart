@@ -1,4 +1,6 @@
+import 'package:chat_app/models/myUser.dart';
 import 'package:chat_app/modules/creat_account/creat_account_navigator.dart';
+import 'package:chat_app/modules/log_in_screen/log_in_view.dart';
 import 'package:chat_app/view/wedgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../base.dart';
+import '../../providers/user_provider.dart';
 import '../../styles/app_colors.dart';
+import '../home_screen/home_screen.dart';
 import 'creat_account_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -19,12 +23,20 @@ class CreatAccount extends StatefulWidget {
   State<CreatAccount> createState() => _CreatAccountState();
 }
 
-class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount>  {
+class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount> implements CreatAccountNavigator {
   var formKey = GlobalKey<FormState>();
   var emailControler = TextEditingController();
   var passwordControler = TextEditingController();
+  var fNameControler = TextEditingController();
+  var lNameControler = TextEditingController();
+  var userName = TextEditingController();
   bool obscureTextCheck = true;
-
+ @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    viewmodel.navigator=this;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +70,7 @@ class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount>  {
                     height: MediaQuery.of(context).size.height * .1,
                   ),
                   TextFieldWidget(
+                    controller: fNameControler,
                     titel: 'First Name',
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
@@ -66,6 +79,7 @@ class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount>  {
                     },
                   ),
                   TextFieldWidget(
+                    controller: lNameControler,
                       titel: 'Last Name',
                       validator: (value) {
                         if (value?.isEmpty ?? true) {
@@ -73,6 +87,7 @@ class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount>  {
                         }
                       }),
                   TextFieldWidget(
+                    controller: userName,
                       titel: 'User Name',
                       validator: (value) {
                         if (value?.isEmpty ?? true) {
@@ -127,10 +142,13 @@ class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount>  {
                               //: GoogleFonts.cairo(
                               //color: AppCloros.lightColor,
                               ),
-                          border: const OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppCloros.lightColor),
-                          ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(color: AppCloros.lightColor)),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(color: AppCloros.lightColor)),
+
                           prefixIcon: const Icon(Icons.lock_outline_rounded),
                           suffix: InkWell(
                               onTap: () {
@@ -150,7 +168,10 @@ class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount>  {
                     ),
                   ),
                   ElevatedButton(
-                      onPressed: onPressed, child: Text("Creat Account"))
+                      onPressed: onPressed, child: Text("Creat Account")),
+                  SizedBox(height: 10.h,),
+                  Center(child: InkWell(onTap: () =>Navigator.pushReplacementNamed(context, LogInView.routName) ,
+                      child: Text("I Have an account")))
                 ],
               ),
             ),
@@ -164,7 +185,7 @@ class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount>  {
     //creat user
     if (formKey.currentState!.validate()) {
       viewmodel.creatAccount(
-          emailControler.text, passwordControler.text);
+          emailControler.text, passwordControler.text,fNameControler.text,lNameControler.text,userName.text);
     }
   }
 
@@ -172,5 +193,12 @@ class _CreatAccountState extends BaseView<CreatAccountViewModel,CreatAccount>  {
   CreatAccountViewModel initViewModel() {
     // TODO: implement initViewModel
    return CreatAccountViewModel();
+  }
+
+  @override
+  goToHome(MyUser myUser) {
+    var provider=Provider.of<UserProvider>(context,listen: false);
+    provider.myUser=myUser;
+    Navigator.pushReplacementNamed(context, HomeScreen.routName);
   }
 }

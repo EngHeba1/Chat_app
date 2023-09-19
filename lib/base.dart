@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 abstract class BaseView <Vm extends BaseViewModel, T extends StatefulWidget>
     extends State<T> implements BaseNavigator {
   late Vm viewmodel;
-
   Vm initViewModel();
 
   @override
@@ -50,7 +49,7 @@ abstract class BaseView <Vm extends BaseViewModel, T extends StatefulWidget>
 }
 
 class BaseViewModel<T extends BaseNavigator> extends ChangeNotifier {
-  late T? navigator=null ;
+  T? navigator=null ;
 }
 
 abstract class BaseNavigator {
